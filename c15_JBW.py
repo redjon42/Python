@@ -1,36 +1,52 @@
-def apply_rules(left_char):
-    """ apply rule transforming left_char to right_char """
-    if left_char == 'A':
-        right_char = 'B'   # Rule 1
-    elif left_char == 'B':
-        right_char = 'AB'  # Rule 2
-    else:
-        right_char = left_char    # no rules apply so keep the character
-    return right_char
+"""
+Write a function called goTurtleStep that takes two parameters:
+a turtle - some turtle - any turtle!
+a command character - any command character.
+And
+makes the turtle execute the command character
+if the command character isn't implemented, then don't do anything.
+The function need not return anything.
+
+"""
+import turtle
 
 
-def process_string(old_str):
-    """ given a string old_str transform it into newStr with rules """
-    new_str = ""
-    for ch in old_str:
-        new_str = new_str + apply_rules(ch)
+def go_turtle_step(turtle_name, command, distance=50, angle=90):
+    """
+    :param command: A single character
+    :param turtle_name: the name of a turtle instance
+    :param distance: integer representing the desired distance of movement
+    :param angle: integer representing the desired distance of rotation
+    :return:
+    """
 
-    return new_str
+    if command == 'f':
+        turtle_name.forward(distance)
+    elif command == 'b':
+        turtle_name.backward(distance)
+    elif command == '+':
+        turtle_name.right(angle)
+    elif command == '-':
+        turtle_name.right(angle)
 
 
-def execute_l_system(num_iterations, axiom):
-    result_string = axiom
-    for i in range(num_iterations):
-        new_string = process_string(result_string)
-        result_string = new_string
-
-    return result_string
+def clear_and_reset_turtle(turtle_name):
+    turtle_name.clear()
+    turtle_name.reset()
 
 
-print(execute_l_system(4, "A"))
+def go_turtle_step_test(test_str):
+    test_turtle = turtle.Turtle()
+    test_turtle.speed(1)
+    go_turtle_step(test_turtle, test_str)
+    clear_and_reset_turtle(test_turtle)
 
-from heapq import nlargest
-my_dict = {'a':500, 'b':5874, 'c': 560,'d':400, 'e':5874, 'f': 20}
-three_largest = nlargest(3, my_dict, key=my_dict.get)
-print(three_largest)
+
+""" go_turtle_step_test routine"""
+wn = turtle.Screen()
+wn.listen()
+command_list = ['f', 'b', '+', '-']
+for command in command_list:
+    go_turtle_step_test(command)
+
 
