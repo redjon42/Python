@@ -5,7 +5,7 @@ def make_table(in_str):
     :return: a printable table of line number, then character
     """
     out_list = []
-    for i in in_str:
+    for i in range(len(in_str)):
         index = i
         char = in_str[i]
         newline = "\n"
@@ -13,10 +13,8 @@ def make_table(in_str):
     return out_list
 
 
-# Main Routine
-
-
+"""Test Routine"""
 my_str = "Five!"
 for line in make_table(my_str):
-    print('{:=4}'.format(line[0]), '{:=4}'.format(line[1]), line[2])
+    print(line[0], '{:>4}'.format(line[1]), line[2])
 
