@@ -8,12 +8,6 @@ I am smart.
 import random
 
 
-def get_number():
-    x = input("Give me a number between 1 and 20: ")
-    x = int(x)
-    return x
-
-
 def make_guess(guess_range=[1, 20]):
     """
     :param guess_range: a list of integers at the current guess range
@@ -34,14 +28,14 @@ def high_or_low(guess_range):
     x = input("Is it {}?, type Y for yes, H for high, and L for low: ".format(guess))
     low = guess_range[0]
     high = guess_range[1]
+    while x not in ["Y", "H", "L"]:
+        x = input("I'm sorry, I don't understand, type Y for yes, H for high, and L for low: ")
     if x == "Y":
         out = "GOOD"
     elif x == "H":
         out = [low, guess-1]
     elif x == "L":
         out = [guess+1, high]
-    else:
-        out = "BAD"
 
     return out
 
@@ -54,8 +48,6 @@ def next_step(guess_range):
     in_par = high_or_low(guess_range)
     if in_par == "GOOD":
         out = "Eureka!, I got it!"
-    elif in_par == "BAD":
-        out = "I'm sorry, I don't understand."
     else:
         new_range = in_par
         out = new_range
@@ -63,16 +55,11 @@ def next_step(guess_range):
 
 
 def run_game():
-    x = get_number()
-    print("You're number is {}".format(x))
+    print("Think of a number between 1 and 20")
 
     first_step = [1, 20]
     current_step = next_step(first_step)
     while current_step != "Eureka!, I got it!":
-        if current_step == "I'm sorry, I don't understand.":
-            print(current_step, "Let's Start Over!")
-            current_step = next_step(first_step)
-        else:
             current_step = next_step(current_step)
     print(current_step)
 
