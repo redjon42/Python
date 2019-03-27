@@ -8,18 +8,6 @@ The user can type lines over and over again while the line they type is not blan
 See if any of the lines are longer than 20 characters.
 """
 
-"""
-AnyLinesLong = False
-while _____ :
-    line = input("Type a line, blank to stop.")
-    if …
-
-if AnyLinesLong :
-    print("you typed at least one line that was long!")
-else:
-    print("All your lines were short")
-"""
-
 
 def get_lines():
     line_list = []
@@ -51,5 +39,9 @@ def while_long():
     return long
 
 
-print(while_long())
+def test_while_long():
+    print(while_long())
 
+
+def test_any_lines_long():
+    print(any_lines_long())
