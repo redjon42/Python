@@ -1,7 +1,7 @@
 
 import random as rm
 """
-exec(open("default_then_test.py").read())
+exec(open("18_2_random.py").read())
 """
 
 """
