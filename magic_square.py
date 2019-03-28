@@ -123,18 +123,18 @@ def sum_diagonals(square_list):
     return [d1_sum, d2_sum]
 
 
-def test_same(sum_list):
+def test_same(list_of_sums):
     """
-    :param sum_list: list: output of sum_something().
+    :param list_of_sums: list: output of sum_something().
     :return: boolean: are the sums the same?
     """
-    end = len(sum_list)
+    end = len(list_of_sums)
     same = True
     index = 1
-    val_0 = sum_list[0]
+    val_0 = list_of_sums[0]
     while same:
         if index < end:
-            val = sum_list[index]
+            val = list_of_sums[index]
             if val == val_0:
                 index += 1
             else:
@@ -170,13 +170,35 @@ def test_consecutive(square_list):
     return same
 
 
+def sum_list(square_list):
+    """
+    :param square_list: a square array of integers
+    :return: a list of the directional sums
+    """
+    list_of_sums = list()
+    list_of_sums.append(sum_rows(square_list))
+    list_of_sums.append(sum_columns(square_list))
+    list_of_sums.append(sum_diagonals(square_list))
+    return list_of_sums
+
+
+def un_list(list_2):
+    """
+    :param list_2: a list with sub-lists
+    :return: list: all of the elements down to the second order
+    """
+    all_list = []
+    for row in list_2:
+        for col in row:
+            all_list.append(col)
+    return all_list
+
+
 def test_magic():
     square = make_int(get_square())
     magic_list = list()
     magic_list.append(test_square(square))
-    magic_list.append(test_same(sum_rows(square)))
-    magic_list.append(test_same(sum_columns(square)))
-    magic_list.append(test_same(sum_diagonals(square)))
+    magic_list.append(test_same(un_list(sum_list(square))))
     magic_list.append(test_consecutive(square))
     if False in magic_list:
         magic = False
@@ -229,6 +251,8 @@ print(test_same(test2))"""
 
 """print(test_consecutive([[1, 2, 3], [1, 2, 3], [1, 2, 3]]))
 print(test_consecutive([[2, 7, 6], [9, 5, 1], [4, 3, 8]]))"""
+
+"""print(un_list([[2, 7, 6], [9, 5, 1], [4, 3, 8]]))"""
 
 print(test_magic())
 
