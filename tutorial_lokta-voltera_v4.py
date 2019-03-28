@@ -32,8 +32,7 @@
 # 
 # Definition of the equations:
 # 
-from numpy import *
-import pylab as p
+import ...
 
 # Definition of parameters 
 a = 1.
