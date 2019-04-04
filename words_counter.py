@@ -29,4 +29,24 @@ def test_word_count():
     print(word_counts(test_string_1))
 
 
-test_word_count()
+def word_probability(word_string):
+    """
+    :param word_string: a raw string of words
+    :return: p_dict: a dictionary of word frequencies and likelihoods
+    """
+    count_dict = word_counts(word_string)
+    total = sum(count_dict.values())
+    p_dict = {}
+    for key in count_dict:
+        p = count_dict[key]/total
+        p_dict[key] = (count_dict[key], p)
+    return p_dict
+
+
+def test_word_probability():
+    test_string_0 = "this is a string with no repetition"
+    test_string_1 = test_string_0 + " this is a string with some repetition"
+    print(word_probability(test_string_1))
+
+
+test_word_probability()
