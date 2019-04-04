@@ -46,7 +46,13 @@ def word_probability(word_string):
 def test_word_probability():
     test_string_0 = "this is a string with no repetition"
     test_string_1 = test_string_0 + " this is a string with some repetition"
-    print(word_probability(test_string_1))
+    p_dict = word_probability(test_string_1)
+    test = p_dict.get('this')
+    print(test[1])
+    p_val = 0
+    for val in p_dict.values():
+        p_val += val[1]
+    print(p_val)
 
 
 test_word_probability()
