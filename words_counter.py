@@ -23,8 +23,8 @@ def word_counts(word_string):
 
 
 def test_word_count():
-    test_string_0 = "this is a string with no repitition"
-    test_string_1 = test_string_0 + " this is a string with some repitition"
+    test_string_0 = "this is a string with no repetition"
+    test_string_1 = test_string_0 + " this is a string with some repetition"
     print(word_counts(test_string_0))
     print(word_counts(test_string_1))
 
