@@ -34,9 +34,8 @@ class LV:
     def model_x(self, x, t):
         return x * (self.alpha - self.beta*t)
 
-    def model_y(self):
-        dx2 = float(-1 * self.y0 * (self.gamma - self.delta * self.x0))
-        return np.array([dx2])
+    def model_y(self, x, t):
+        return -1 * x * (self.gamma - self.delta * t)
 
     def solve(self):
         model_x1 = integrate.RK23(self.model_x(x=self.data[0], t=self.data[2]),
