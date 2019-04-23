@@ -14,35 +14,40 @@ def dX_dt(X, t=0):
 
 class LV:
 
-    def __init__(self, d, p):
+    def __init__(self, d, p, s):
         """
-        :param d: a list of [ [x1], [x2], and [time] ] sublist-vectors.
-        :param p: a list of parameters a,b , g,d.
+        :param d: a np array of [ [x1], [x2], and [time] ] sublist-vectors.
+        :param p: a np array of parameters a,b , g,d.
+        :param s: state np array
         """
         self.data = np.array(d)
 
         self.pars = np.array(p)
-        self.alpha = self.pars[0]
-        self.beta = self.pars[1]
-        self.gamma = self.pars[2]
-        self.delta = self.pars[3]
+        self.alpha = self.pars.item(0)
+        self.beta = self.pars.item(1)
+        self.gamma = self.pars.item(2)
+        self.delta = self.pars.item(3)
 
-        self.x0 = np.mean(self.data[0])
-        self.y0 = np.mean(self.data[1])
+        self.x0 = s.item(0)
+        self.y0 = s.item(1)
 
-    def model(self):
-        dx1 = self.x0 * (self.alpha - self.beta * self.y0)
-        dx2 = self.y0 * (self.gamma - self.delta * self.x0)
-        return np.array([dx1, dx2])
+    def model_x(self, x, t):
+        return x * (self.alpha - self.beta*t)
+
+    def model_y(self):
+        dx2 = float(-1 * self.y0 * (self.gamma - self.delta * self.x0))
+        return np.array([dx2])
 
     def solve(self):
-        model_x1 = integrate.RK23(self.model()[0], t0=self.data[2,0],
-                                  t_bound=self.data[2,-1],
-                                  y0=self.x0)
-        model_x2 = integrate.RK23(self.model()[1], t0=self.data[2, 0],
-                                  t_bound=self.data[2,-1],
-                                  y0=self.y0)
-        return np.array([model_x1, model_x2])
+        model_x1 = integrate.RK23(self.model_x(x=self.data[0], t=self.data[2]),
+                                  t0=self.data[2, 0],
+                                  t_bound=self.data[2, -1],
+                                  y0=[self.x0])
+        model_x2 = integrate.RK23(self.model_x(x=self.data[1], t=self.data[2]),
+                                  t0=self.data[2, 0],
+                                  t_bound=self.data[2, -1],
+                                  y0=[self.y0])
+        return model_x1, model_x2
 
 
 def read_data():
@@ -66,10 +71,15 @@ def read_data():
             out_y[i] = float(out_y[i])
     csv_file.close()
 
-    return np.array([out_x, out_y])
-
-def LV_test():
+    return np.array([out_x, out_y, range(101)])
 
 
+def lv_test():
+    d = read_data()
+    p = np.array([2, .7, .8, .6])
+    s = np.array([10, 10])
+    test = LV(d, p, s)
+    return test.solve()
 
-print(read_data())
+
+print(lv_test())
