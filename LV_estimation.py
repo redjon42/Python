@@ -1,7 +1,7 @@
 
 import scipy.integrate as integrate
 import numpy as np
-import matplotlib as plot
+import matplotlib.pyplot as mplot
 import pandas as pd
 import csv
 
@@ -31,22 +31,34 @@ class LV:
         self.x0 = s.item(0)
         self.y0 = s.item(1)
 
-    def model_x(self, x, t):
-        return x * (self.alpha - self.beta*t)
 
-    def model_y(self, x, t):
-        return -1 * x * (self.gamma - self.delta * t)
+def model_x(t, x):
+    """
+    p = np.array([2, .7, .8, .6])  s = np.array([10, 10])
+    """
+    return x * (2 - .7*t)
 
-    def solve(self):
-        model_x1 = integrate.RK23(self.model_x(x=self.data[0], t=self.data[2]),
-                                  t0=self.data[2, 0],
-                                  t_bound=self.data[2, -1],
-                                  y0=[self.x0])
-        model_x2 = integrate.RK23(self.model_x(x=self.data[1], t=self.data[2]),
-                                  t0=self.data[2, 0],
-                                  t_bound=self.data[2, -1],
-                                  y0=[self.y0])
-        return model_x1, model_x2
+
+def model_y(t, x):
+    return -1*x * (.8 - .6*t)
+
+
+def solve(lv_0):
+    """
+    :param lv_0: Class LV instance
+    :return:
+    """
+    model_x1 = integrate.RK23(model_x,
+                              t0=lv_0.data[2, 0],
+                              t_bound=lv_0.data[2, -1],
+                              y0=[lv_0.x0],
+                              vectorized=True)
+    model_x2 = integrate.RK23(model_y,
+                              t0=lv_0.data[2, 0],
+                              t_bound=lv_0.data[2, -1],
+                              y0=[lv_0.y0],
+                              vectorized=True)
+    return model_x1, model_x2
 
 
 def read_data():
@@ -73,12 +85,67 @@ def read_data():
     return np.array([out_x, out_y, range(101)])
 
 
+def loss(m2, d0):
+    """
+    :param m2: output of solve() 2-part model
+    :param d0: data output of read_data()
+    :return: MSE
+    """
+    mx = m2[0]
+    my = m2[1]
+    dx = 0
+    return mx
+
+
 def lv_test():
     d = read_data()
     p = np.array([2, .7, .8, .6])
     s = np.array([10, 10])
     test = LV(d, p, s)
-    return test.solve()
+    return solve(test)
 
 
-print(lv_test())
+
+
+
+print(lv_test()[0])
+
+
+sol = lv_test()[0]
+print(sol.y[0])
+mplot.plot(sol.t, sol.y[0])
+mplot.show()
+
+
+t0 = 0
+tf = 10
+x0 = 0
+
+
+def F(t, x): return x*t + 2
+
+
+sol = integrate.RK23(F, t0, [x0], tf)
+for y in sol.y:
+    print(y)
+fig, ax = mplot.subplots()
+ax.plot(sol.t, sol.y[0])
+mplot.show()
+
+
+'''
+test = lv_test()
+test = test[0]
+test = test.y
+for x in test:
+    print(x)
+
+d = read_data()
+p = np.array([2, .7, .8, .6])
+s = np.array([10, 10])
+test = LV(d, p, s)
+test = test.data
+print(test[2, -1])
+'''
+
+
