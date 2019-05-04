@@ -3,6 +3,7 @@ from scipy.integrate import odeint
 import numpy as np
 import matplotlib.pyplot as pl
 import csv
+import scipy.optimize as op
 
 
 class LV:
@@ -117,7 +118,7 @@ def ideal_fig():
     return fig
 
 
-def make_noise(sd=1, seed=12345):
+def make_noise(sd=1, pars=np.array([2, .7, .8, .6]), seed=12345):
     ideal = ideal_model()
 
     np.random.seed(seed)
@@ -130,7 +131,7 @@ def make_noise(sd=1, seed=12345):
     time = range(101)
 
     new_data = np.array([noise_x, noise_y, time])
-    new_lv = LV(new_data)
+    new_lv = LV(new_data, pars)
     return new_lv
 
 
@@ -146,15 +147,35 @@ def noise_fig():
     return fig
 
 
-def calculate_loss():
+def model_any(lv):
+    model, t = solve(lv)
+    return model, t
+
+
+def calculate_loss(pars, sd=1):
     lv1 = data_lv()
-    lv2 = make_noise()
+    lv2 = make_noise(sd, pars)
     temp = loss(lv1, lv2)
     return temp
 
 
+sig = 1
+p_lv = data_lv()
+par = p_lv.pars
+
+test, info = op.minimize(calculate_loss, par, method="BFGS")
+print(info['message'])
+
+
+
+
+
+
+
 #pl.show(noise_fig())
 #print(calculate_loss())
+
+
 
 
 
