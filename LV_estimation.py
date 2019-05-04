@@ -7,7 +7,9 @@ import csv
 
 class LV:
 
-    def __init__(self, d, p, s):
+    def __init__(self, d,
+                 p=np.array([2, .7, .8, .6]),
+                 s=np.array([10, 10])):
         """
         :param d: a np array of [ [x1], [x2], and [time] ] sublist-vectors.
         :param p: a np array of parameters a,b , g,d.
@@ -22,6 +24,8 @@ class LV:
         self.delta = self.pars.item(3)
 
         self.y0 = [s[0], s[1]]
+        self.dat_x = self.data[0]
+        self.dat_y = self.data[1]
         self.t = np.array(self.data[2])
 
 
@@ -68,46 +72,90 @@ def read_data():
     return np.array([out_x, out_y, range(101)])
 
 
-def loss(m2, d0):
+def loss(m, d, n=101):
     """
-    :param m2: output of solve() 2-part model
-    :param d0: data output of read_data()
+    :param m: model data [x,y], t
+    :param d: sample data [x,y], t
+    :param n: sample size, length of data
     :return: MSE
     """
-    mx = m2[0]
-    my = m2[1]
-    dx = 0
-    return mx
+    mod = m.data[0]
+    dat = d.data[0]
+    dif_x = (mod[0] - dat[0])**2
+    dif_y = (mod[1] - dat[1])**2
+    dif = dif_x + dif_y
+    mse = np.mean(dif)
+    return mse
 
 
-def make_lv():
+def data_lv():
     d = read_data()
-    p = np.array([2, .7, .8, .6])
-    s = np.array([10, 10])
-    lv_out = LV(d, p, s)
+    lv_out = LV(d)
     return lv_out
 
 
-def make_model():
-    model, t = solve(make_lv())
+def ideal_model():
+    model, t = solve(data_lv())
     return model, t
 
 
-def model_plot():
-    dat = make_model()
+def ideal_fig():
+    """
+    dat[0]: x,y
+    dat[1]: t
+    """
+    dat = ideal_model()
     rabbits, foxes = dat[0]
-    f1 = pl.figure()
-    pl.plot(dat[1], rabbits, 'r-', label='Prey')
-    pl.plot(dat[1], foxes, 'b-', label='Predator')
+    fig = pl.figure()
+    pl.plot(dat[1], rabbits, 'ro-', linewidth=.7, label='Prey')
+    pl.plot(dat[1], foxes, 'bo-', linewidth=.7, label='Predator')
     pl.grid()
     pl.legend(loc='best')
     pl.xlabel('time')
     pl.ylabel('population')
     pl.title('Idealized Predator/Prey Model')
-    return f1
+    return fig
 
 
-pl.show(model_plot())
+def make_noise(sd=1, seed=12345):
+    ideal = ideal_model()
+
+    np.random.seed(seed)
+    norm_1 = np.random.normal(0, sd, 101)
+    np.random.seed(seed+1)
+    norm_2 = np.random.normal(0, sd, 101)
+
+    noise_x = ideal[0][0] + norm_1
+    noise_y = ideal[0][1] + norm_2
+    time = range(101)
+
+    new_data = np.array([noise_x, noise_y, time])
+    new_lv = LV(new_data)
+    return new_lv
+
+
+def noise_fig():
+    fig = ideal_fig()
+    new = make_noise().data
+
+    new_x = new[0]
+    new_y = new[1]
+
+    pl.plot(new_x, 'c+--', linewidth=.5, label='Prey Noise')
+    pl.plot(new_y, 'm+--', linewidth=.5, label='Pred Noise')
+    return fig
+
+
+def calculate_loss():
+    lv1 = data_lv()
+    lv2 = make_noise()
+    temp = loss(lv1, lv2)
+    return temp
+
+
+#pl.show(noise_fig())
+#print(calculate_loss())
+
 
 
 
