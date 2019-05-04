@@ -159,19 +159,21 @@ def calculate_loss(pars, sd=1):
     return temp
 
 
-def loss_fig(p, sd=1):
+def loss_fig(p):
     fig = ideal_fig()
-    new = make_noise(sd, p).data
+    new_lv = data_lv()
+    new_lv.pars = p
+    new_model = model_any(new_lv)
+    new = new_model
 
-    new_x = new[0]
-    new_y = new[1]
+    new_x, new_y = new[0]
 
     pl.plot(new_x, 'c+--', linewidth=.5, label='Prey Fit')
     pl.plot(new_y, 'm+--', linewidth=.5, label='Pred Fit')
     return fig
 
 
-sig = 2
+sig = 1
 p_lv = data_lv()
 par = p_lv.pars
 
@@ -183,7 +185,7 @@ print("pre mse: ", old_loss, "post mse: ", new_loss)
 
 pl.show(ideal_fig())
 pl.show(noise_fig())
-pl.show(loss_fig(p=test.x, sd=sig))
+pl.show(loss_fig(p=test.x))
 
 
 
