@@ -173,12 +173,11 @@ def loss_fig(p):
 
 
 sig = 1
-p_lv = data_lv()
-par = p_lv.pars
+par = [1, 1, 1, 1]
 
 test = op.minimize(calculate_loss, par, method="BFGS")
 print(test.x)
-old_loss = calculate_loss(p_lv.pars)
+old_loss = calculate_loss(par)
 new_loss = calculate_loss(test.x, sig)
 print("pre mse: ", old_loss, "post mse: ", new_loss)
 
