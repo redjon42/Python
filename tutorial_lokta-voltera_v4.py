@@ -1,3 +1,9 @@
+
+"""
+SOURCE: https://scipy-cookbook.readthedocs.io/items/LoktaVolterraTutorial.html
+"""
+
+
 # This example describe how to integrate ODEs with scipy.integrate module, and how
 # to use the matplotlib module to plot trajectories, direction fields and other
 # useful information.

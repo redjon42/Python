@@ -1,15 +1,8 @@
 
-import scipy.integrate as integrate
+from scipy.integrate import odeint
 import numpy as np
-import matplotlib.pyplot as mplot
-import pandas as pd
+import matplotlib.pyplot as pl
 import csv
-
-"""
-def dX_dt(X, t=0): 
-    return array([ a*X[0] -   b*X[0]*X[1] ,  
-                  -c*X[1] + d*b*X[0]*X[1] ])
-"""
 
 
 class LV:
@@ -28,37 +21,27 @@ class LV:
         self.gamma = self.pars.item(2)
         self.delta = self.pars.item(3)
 
-        self.x0 = s.item(0)
-        self.y0 = s.item(1)
+        self.y0 = [s[0], s[1]]
+        self.t = np.array(self.data[2])
 
 
-def model_x(t, x):
+def d1(y, t, alp, bet, gam, dlt):
+    dy_dt = np.array([alp * y[0] - bet * y[0] * y[1],
+                     -gam * y[1] + dlt * y[0] * y[1]])
+    return dy_dt
+
+
+def solve(lv):
     """
-    p = np.array([2, .7, .8, .6])  s = np.array([10, 10])
-    """
-    return x * (2 - .7*t)
-
-
-def model_y(t, x):
-    return -1*x * (.8 - .6*t)
-
-
-def solve(lv_0):
-    """
-    :param lv_0: Class LV instance
+    :param lv: Class LV instance
     :return:
     """
-    model_x1 = integrate.RK23(model_x,
-                              t0=lv_0.data[2, 0],
-                              t_bound=lv_0.data[2, -1],
-                              y0=[lv_0.x0],
-                              vectorized=True)
-    model_x2 = integrate.RK23(model_y,
-                              t0=lv_0.data[2, 0],
-                              t_bound=lv_0.data[2, -1],
-                              y0=[lv_0.y0],
-                              vectorized=True)
-    return model_x1, model_x2
+    y0 = lv.y0
+    t = lv.t
+    sol, info_dict = odeint(d1, y0, t,
+                            args=(lv.alpha, lv.beta, lv.gamma, lv.delta),
+                            full_output=True)
+    return sol.T, t
 
 
 def read_data():
@@ -97,55 +80,35 @@ def loss(m2, d0):
     return mx
 
 
-def lv_test():
+def make_lv():
     d = read_data()
     p = np.array([2, .7, .8, .6])
     s = np.array([10, 10])
-    test = LV(d, p, s)
-    return solve(test)
+    lv_out = LV(d, p, s)
+    return lv_out
 
 
+def make_model():
+    model, t = solve(make_lv())
+    return model, t
 
 
-
-print(lv_test()[0])
-
-
-sol = lv_test()[0]
-print(sol.y[0])
-mplot.plot(sol.t, sol.y[0])
-mplot.show()
-
-
-t0 = 0
-tf = 10
-x0 = 0
-
-
-def F(t, x): return x*t + 2
+def model_plot():
+    dat = make_model()
+    rabbits, foxes = dat[0]
+    f1 = pl.figure()
+    pl.plot(dat[1], rabbits, 'r-', label='Prey')
+    pl.plot(dat[1], foxes, 'b-', label='Predator')
+    pl.grid()
+    pl.legend(loc='best')
+    pl.xlabel('time')
+    pl.ylabel('population')
+    pl.title('Idealized Predator/Prey Model')
+    return f1
 
 
-sol = integrate.RK23(F, t0, [x0], tf)
-for y in sol.y:
-    print(y)
-fig, ax = mplot.subplots()
-ax.plot(sol.t, sol.y[0])
-mplot.show()
+pl.show(model_plot())
 
 
-'''
-test = lv_test()
-test = test[0]
-test = test.y
-for x in test:
-    print(x)
-
-d = read_data()
-p = np.array([2, .7, .8, .6])
-s = np.array([10, 10])
-test = LV(d, p, s)
-test = test.data
-print(test[2, -1])
-'''
 
 
