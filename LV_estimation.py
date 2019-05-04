@@ -50,7 +50,7 @@ def solve(lv):
 
 
 def read_data():
-    with open('/Users/geneva/Desktop/Thesis/out_x.csv') as csv_file:
+    with open('out_x.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         out_x = list()
         for line in csv_reader:
@@ -60,7 +60,7 @@ def read_data():
             out_x[i] = float(out_x[i])
     csv_file.close()
 
-    with open('/Users/geneva/Desktop/Thesis/out_y.csv') as csv_file:
+    with open('out_y.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         out_y = list()
         for line in csv_reader:
@@ -73,11 +73,10 @@ def read_data():
     return np.array([out_x, out_y, range(101)])
 
 
-def loss(m, d, n=101):
+def loss(m, d):
     """
     :param m: model data [x,y], t
     :param d: sample data [x,y], t
-    :param n: sample size, length of data
     :return: MSE
     """
     mod = m.data[0]
